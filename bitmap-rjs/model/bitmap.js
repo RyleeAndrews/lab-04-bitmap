@@ -25,11 +25,35 @@ module.exports = () => {
       }
     };
 
+    let toGreen = function () {
+      for (var i = 1; i < colorTableArr.length; i) {
+        colorTableArr[i] = 255;
+        i = i + 4;
+      }
+    };
+
+    let toBlue = function () {
+      for (var i = 0; i < colorTableArr.length; i) {
+        colorTableArr[i] = 255;
+        i = i + 4;
+      }
+    };
+
     let invert = function () {
       for (var i = 0; i < colorTableArr.length; i) {
         colorTableArr[i] = 255 - colorTableArr[i];
         colorTableArr[i+1] = 255 - colorTableArr[i+1];
         colorTableArr[i+2] = 255 - colorTableArr[i+2];
+        i = i + 4;
+      }
+    };
+
+    let greyscale = function () {
+      for (var i = 0; i < colorTableArr.length; i) {
+        var avg = (colorTableArr[i] + colorTableArr[i + 1] + colorTableArr[i + 2]) / 3;
+        colorTableArr[i] = avg;
+        colorTableArr[i+1] = avg;
+        colorTableArr[i+2] = avg;
         i = i + 4;
       }
     };
