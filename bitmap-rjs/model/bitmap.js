@@ -42,12 +42,12 @@ module.exports = () => {
 
     fs.writeFile('../assets/bitmap-new.bmp', newImgBuf, (err) => {if (err) {console.error(err);} });
 
-    function Headers (header) {
-      this.headerField = header.slice(0,2).toString(); // 02
-      this.size = header.readUInt16LE(2); //02-06
-      this.width = header.readUInt16LE(18);// 18-21
-      this.height = header.readUInt16LE(22);// 22-25
-      this.bitDepth = header.readUInt16LE(28);// 28-29
+    function Headers (data) {
+      this.headerField = data.slice(0,2).toString(); // 02
+      this.size = data.readUInt16LE(2); //02-06
+      this.width = data.readUInt16LE(18);// 18-21
+      this.height = data.readUInt16LE(22);// 22-25
+      this.bitDepth = data.readUInt16LE(28);// 28-29
     }
 
     let newImgHeader = new Headers(headerBuf);
