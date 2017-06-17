@@ -6,9 +6,9 @@ module.exports = (path, xform, callback) => {
   fs.readFile(path, (err, data) => {
 
     if (err)
-      return callback(err);
+      return callback(new Error(err));
 
-    let xformArr = ['toRed', 'toBlue', 'toGreen', 'greyscale', 'invert'];
+    let xformArr = ['toRed', 'toBlue', 'toGreen', 'grayscale', 'invert'];
     if (xformArr.indexOf(xform) == -1)
       return callback(new Error(xform + ' is an invalid argument'));
 
@@ -17,7 +17,9 @@ module.exports = (path, xform, callback) => {
     if (data.length < 1081)
       return callback(new Error('This file is too short to be a bitmap.'));
     if (data.readUInt16LE(10) != 1078)
-      return callback(new Error('This app only handles Windows bitmap format.  Expected to see pixel array offset at byte 1078.'));
+      return callback(new Error('This app only handles Windows bitmap format.  Expected to see pixel array offset 1078 at byte 10.'));
+
+    console.log('reading file \'' + path + '\'...');
 
     function MetaData (data) {
       this.headerField = data.slice(0,2).toString(); // 02
@@ -78,9 +80,9 @@ module.exports = (path, xform, callback) => {
       }
     }
 
-    //greyscale
+    //grayscale
 
-    if (xform === 'greyscale') {
+    if (xform === 'grayscale') {
       for (let i = 0; i < colorTableArr.length; i) {
         var avg = (colorTableArr[i] + colorTableArr[i + 1] + colorTableArr[i + 2]) / 3;
         colorTableArr[i] = avg;
@@ -96,8 +98,11 @@ module.exports = (path, xform, callback) => {
     //Recombine all four buffers
     let newImgBuf = Buffer.concat([headerBuf, DIBBuf, newColorTableBuf, pixMapBuf], data.length);
 
-    fs.writeFile(path + '.new.bmp', newImgBuf, (err) => {if (err) {return callback(err);} });
+    let newFilePath = path.slice(0, -4) + '-' + xform + '.bmp';
 
+    fs.writeFile(newFilePath, newImgBuf, (err) => {if (err) {return callback(new Error(err));} });
+    console.log('verifier#: ' + newImgBuf.readUInt32LE(58));
+    console.log('complete: wrote new file \'' + newFilePath + '\'...');
     return callback(null, newImgBuf.readUInt32LE(58));
 
   });
