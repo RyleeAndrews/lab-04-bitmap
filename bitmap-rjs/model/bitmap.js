@@ -8,6 +8,10 @@ module.exports = (path, xform, callback) => {
     if (err)
       return callback(err);
 
+    let xformArr = ['toRed', 'toBlue', 'toGreen', 'greyscale', 'invert'];
+    if (xformArr.indexOf(xform) == -1)
+      return callback(new Error(xform + ' is an invalid argument'));
+
     if (data.slice(0,2).toString() != 'BM')
       return callback(new Error('This app only handles Windows bitmap format: \'BM\'.'));
     if (data.length < 1081)
@@ -36,46 +40,55 @@ module.exports = (path, xform, callback) => {
     //Extract Color Table from Buffer to Array
     let colorTableArr = Array.prototype.slice.call(colorTableBuf);
 
-    let toRed = function () {
-      for (var i = 2; i < colorTableArr.length; i) {
+    //toRed
+
+    if (xform === 'toRed') {
+      for (let i = 2; i < colorTableArr.length; i) {
         colorTableArr[i] = 255;
         i = i + 4;
       }
-    };
+    }
 
-    let toGreen = function () {
-      for (var i = 1; i < colorTableArr.length; i) {
+    //toGreen
+
+    if (xform === 'toGreen') {
+      for (let i = 1; i < colorTableArr.length; i) {
         colorTableArr[i] = 255;
         i = i + 4;
       }
-    };
+    }
 
-    let toBlue = function () {
-      for (var i = 0; i < colorTableArr.length; i) {
+    //toBlue
+
+    if (xform === 'toBlue') {
+      for (let i = 0; i < colorTableArr.length; i) {
         colorTableArr[i] = 255;
         i = i + 4;
       }
-    };
+    }
 
-    let invert = function () {
-      for (var i = 0; i < colorTableArr.length; i) {
+    //invert
+
+    if (xform === 'invert') {
+      for (let i = 0; i < colorTableArr.length; i) {
         colorTableArr[i] = 255 - colorTableArr[i];
         colorTableArr[i+1] = 255 - colorTableArr[i+1];
         colorTableArr[i+2] = 255 - colorTableArr[i+2];
         i = i + 4;
       }
-    };
-    xform();
+    }
 
-    let greyscale = function () {
-      for (var i = 0; i < colorTableArr.length; i) {
+    //greyscale
+
+    if (xform === 'greyscale') {
+      for (let i = 0; i < colorTableArr.length; i) {
         var avg = (colorTableArr[i] + colorTableArr[i + 1] + colorTableArr[i + 2]) / 3;
         colorTableArr[i] = avg;
         colorTableArr[i+1] = avg;
         colorTableArr[i+2] = avg;
         i = i + 4;
       }
-    };
+    }
 
     //Push colorTableArr back into colorTableBuf
     let newColorTableBuf = Buffer.from(colorTableArr);
@@ -85,7 +98,7 @@ module.exports = (path, xform, callback) => {
 
     fs.writeFile(path + '.new.bmp', newImgBuf, (err) => {if (err) {return callback(err);} });
 
-    return callback('done');
+    return callback(null, newImgBuf.readUInt32LE(58));
 
   });
 };
