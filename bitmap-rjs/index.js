@@ -10,7 +10,6 @@ let main = module.exports = (path, xform) => {
 
   bitmap(path, xform, (err, result) => {
     if (err) console.log(err);
-    console.log('verifier#: ' + result);
     return(err, result);
   });
 };
