@@ -83,9 +83,9 @@ describe('testing bitmap.js', () => {
       done();
     });
   });
-  it('should return \'Error: This app only handles Windows bitmap format.  Expected to see pixel array offset 1078 at byte 10.\' for a file beginning with ASCII \'BM\', but long enough to contain data at byte 10.', (done) => {
+  it('should return \'Error: This app only handles Windows bitmap format.  Expected to see pixel array offset 1078 or higher at byte 10.\' for a file beginning with ASCII \'BM\', but long enough to contain data at byte 10.', (done) => {
     bitmap('./assets/test-long.txt', 'toRed', (err, result) => {
-      expect(err).toEqual('Error: This app only handles Windows bitmap format.  Expected to see pixel array offset 1078 at byte 10.');
+      expect(err).toEqual('Error: This app only handles Windows bitmap format.  Expected to see pixel array offset 1078 or higher at byte 10.');
       expect(result).toNotExist();
       done();
     });
