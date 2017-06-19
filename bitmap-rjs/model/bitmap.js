@@ -16,8 +16,8 @@ module.exports = (path, xform, callback) => {
       return callback(new Error('This app only handles Windows bitmap format: \'BM\'.'));
     if (data.length < 1081)
       return callback(new Error('This file is too short to be a bitmap.'));
-    if (data.readUInt16LE(10) != 1078)
-      return callback(new Error('This app only handles Windows bitmap format.  Expected to see pixel array offset 1078 at byte 10.'));
+    if (data.readUInt16LE(10) <= 1078)
+      return callback(new Error('This app only handles Windows bitmap format.  Expected to see pixel array offset 1078 or higher at byte 10.'));
 
     console.log('reading file \'' + path + '\'...');
 
